@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foto en Texto de Amor ❤️</title>
+    <style>
+        body {
+            background-color: #0d0f18;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body>
+    <h1>Retrato de Amor en Texto ❤️</h1>
+    <canvas id="artCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('artCanvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+
+        // Puedes cambiar la frase que forma la imagen aquí:
+        const miTexto = "TE AMO ❤️ JUNTOS SIEMPRE ❤️ NUESTRA HISTORIA ❤️";
+
+        img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            const offCanvas = document.createElement('canvas');
+            offCanvas.width = img.width;
+            offCanvas.height = img.height;
+            const offCtx = offCanvas.getContext('2d');
+            offCtx.drawImage(img, 0, 0);
+            const pixels = offCtx.getImageData(0, 0, img.width, img.height).data;
+
+            ctx.fillStyle = '#0a0a0c';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const fontSize = 10;
+            ctx.font = `bold ${fontSize}px monospace`;
+
+            let charIdx = 0;
+            for (let y = 0; y < canvas.height; y += fontSize * 0.85) {
+                for (let x = 0; x < canvas.width; x += fontSize * 0.65) {
+                    const idx = (Math.floor(y) * canvas.width + Math.floor(x)) * 4;
+                    const r = pixels[idx], g = pixels[idx+1], b = pixels[idx+2];
+                    if (r === undefined) continue;
+
+                    ctx.fillStyle = `rgb(${r},${g},${b})`;
+                    ctx.fillText(miTexto[charIdx % miTexto.length], x, y);
+                    charIdx++;
+                }
+            }
+        };
+
+        // Carga la foto (o tu Base64)
+        img.src = 'tu_foto.jpg';
+    </script>
+</body>
+</html>
