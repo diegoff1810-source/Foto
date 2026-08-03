@@ -93,10 +93,9 @@
             <div class="control-group">
                 <label for="renderMode">Estilo de Renderizado:</label>
                 <select id="renderMode">
+                    <option value="gold" selected>Dorado Cálido</option>
                     <option value="color">Texto con Color Original</option>
-                    <option value="romantic">Paleta Romántica (Rosa / Púrpura)</option>
-                    <option value="ascii">ASCII Clásico (Escala de Grises)</option>
-                    <option value="gold">Dorado Cálido (Golden Hour)</option>
+                    <option value="ascii">ASCII Clásico</option>
                 </select>
             </div>
             <div class="control-group">
@@ -136,7 +135,6 @@
         let showOriginal = false;
         let enableLoupe = true;
 
-        // Permitir carga de imágenes cruzadas localmente
         img.crossOrigin = "Anonymous";
 
         let hearts = [];
@@ -181,7 +179,6 @@
             renderArt();
         };
 
-        // Apuntar directamente al archivo subido en el repositorio
         img.src = 'foto.jpg';
 
         function renderArt() {
@@ -238,16 +235,13 @@
                     const char = words[charIndex % words.length];
                     charIndex++;
 
-                    if (mode === 'color') {
+                    if (mode === 'gold') {
+                        ctx.fillStyle = `rgb(${Math.floor(r * 1.1)},${Math.floor(g * 0.85)},${Math.floor(b * 0.4)})`;
+                    } else if (mode === 'color') {
                         ctx.fillStyle = `rgb(${r},${g},${b})`;
-                    } else if (mode === 'romantic') {
-                        const mix = brightness;
-                        ctx.fillStyle = `rgb(${Math.floor(255 * mix)},${Math.floor(77 + 100 * mix)},${Math.floor(140 + 115 * mix)})`;
                     } else if (mode === 'ascii') {
                         const v = Math.floor(brightness * 255);
                         ctx.fillStyle = `rgb(${v},${v},${v})`;
-                    } else if (mode === 'gold') {
-                        ctx.fillStyle = `rgb(${Math.floor(r * 1.1)},${Math.floor(g * 0.85)},${Math.floor(b * 0.4)})`;
                     }
 
                     ctx.fillText(char, x, y);
