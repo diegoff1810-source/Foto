@@ -4,67 +4,314 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Foto en Texto de Amor ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #0d0f18;
+            --card-bg: rgba(22, 26, 42, 0.8);
+            --accent-pink: #ff4d7d;
+            --text-light: #f3f4f6;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: #0d0f18;
-            color: #fff;
             font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-x: hidden;
+            position: relative;
         }
-        canvas {
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            cursor: crosshair;
+        #bgCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
         }
+        header { text-align: center; padding: 2rem 1rem 1rem; z-index: 10; max-width: 800px; }
+        header h1 {
+            font-size: 2rem; font-weight: 700;
+            background: linear-gradient(135deg, #ff758c, #ff7eb3, #a855f7);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        header p { color: #9ca3af; font-size: 0.9rem; }
+        main { z-index: 10; width: 100%; max-width: 1100px; padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+        .controls-card {
+            background: var(--card-bg); backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color); border-radius: 16px;
+            padding: 1.25rem; width: 100%; max-width: 900px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem; align-items: center;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 0.3rem; }
+        .control-group label { font-size: 0.8rem; font-weight: 600; color: #d1d5db; }
+        .control-group input[type="text"] {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff; padding: 0.5rem; border-radius: 8px; outline: none;
+        }
+        .control-group select, .control-group input[type="range"] {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff; padding: 0.4rem; border-radius: 8px; outline: none; cursor: pointer;
+        }
+        .btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; grid-column: 1 / -1; justify-content: center; margin-top: 0.5rem; }
+        .btn {
+            background: linear-gradient(135deg, #ff4d7d, #e11d48); color: white; border: none;
+            padding: 0.6rem 1.2rem; border-radius: 30px; font-weight: 600; font-size: 0.85rem; cursor: pointer;
+        }
+        .btn-secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .canvas-container {
+            position: relative; background: #000; border-radius: 16px; overflow: hidden;
+            border: 1px solid var(--border-color); max-width: 100%; display: flex; justify-content: center;
+        }
+        canvas#artCanvas { display: block; max-width: 100%; height: auto; cursor: crosshair; }
+        #magnifier {
+            position: absolute; width: 160px; height: 160px; border-radius: 50%;
+            border: 3px solid var(--accent-pink); pointer-events: none; display: none;
+            overflow: hidden; background-color: #000; z-index: 100;
+        }
+        #magnifierCanvas { position: absolute; top: 0; left: 0; }
     </style>
 </head>
 <body>
-    <h1>Retrato de Amor en Texto ❤️</h1>
-    <canvas id="artCanvas"></canvas>
-
+    <canvas id="bgCanvas"></canvas>
+    <header>
+        <h1>Retrato de Amor en Texto ❤️</h1>
+        <p>Pasa el cursor o activa la lupa para ver cómo miles de palabras forman su fotografía.</p>
+    </header>
+    <main>
+        <div class="controls-card">
+            <div class="control-group" style="grid-column: span 2;">
+                <label for="customText">Texto personalizado:</label>
+                <input type="text" id="customText" value="TE AMO ❤️ JUNTOS SIEMPRE ❤️ NUESTRA HISTORIA ❤️">
+            </div>
+            <div class="control-group">
+                <label for="fontSize">Tamaño del Texto: <span id="fontSizeVal">10px</span></label>
+                <input type="range" id="fontSize" min="6" max="18" value="10" step="1">
+            </div>
+            <div class="control-group">
+                <label for="renderMode">Estilo de Renderizado:</label>
+                <select id="renderMode">
+                    <option value="color">Texto con Color Original</option>
+                    <option value="romantic">Paleta Romántica (Rosa / Púrpura)</option>
+                    <option value="ascii">ASCII Clásico (Escala de Grises)</option>
+                    <option value="gold">Dorado Cálido (Golden Hour)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="contrast">Brillo / Contraste:</label>
+                <input type="range" id="contrast" min="0.8" max="1.8" value="1.1" step="0.05">
+            </div>
+            <div class="btn-group">
+                <button class="btn" id="toggleOriginalBtn">📷 Ver Foto Original</button>
+                <button class="btn btn-secondary" id="toggleLoupeBtn">🔍 Lupa: ON</button>
+                <button class="btn btn-secondary" id="downloadBtn">📥 Descargar Imagen</button>
+            </div>
+        </div>
+        <div class="canvas-container">
+            <canvas id="artCanvas"></canvas>
+            <div id="magnifier"><canvas id="magnifierCanvas"></canvas></div>
+        </div>
+    </main>
     <script>
+        const imgDataUrl = "data:image/jpeg;base64,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";
+
         const canvas = document.getElementById('artCanvas');
         const ctx = canvas.getContext('2d');
-        const img = new Image();
+        const mag = document.getElementById('magnifier');
+        const magCanvas = document.getElementById('magnifierCanvas');
+        const magCtx = magCanvas.getContext('2d');
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
 
-        // Puedes cambiar la frase que forma la imagen aquí:
-        const miTexto = "TE AMO ❤️ JUNTOS SIEMPRE ❤️ NUESTRA HISTORIA ❤️";
+        const customTextInput = document.getElementById('customText');
+        const fontSizeInput = document.getElementById('fontSize');
+        const fontSizeVal = document.getElementById('fontSizeVal');
+        const renderModeSelect = document.getElementById('renderMode');
+        const contrastInput = document.getElementById('contrast');
+        const toggleOriginalBtn = document.getElementById('toggleOriginalBtn');
+        const toggleLoupeBtn = document.getElementById('toggleLoupeBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let img = new Image();
+        let showOriginal = false;
+        let enableLoupe = true;
+
+        let hearts = [];
+        function initBg() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+            hearts = Array.from({length: 25}, () => ({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                size: Math.random() * 12 + 8,
+                speed: Math.random() * 0.8 + 0.3,
+                opacity: Math.random() * 0.5 + 0.1,
+                swing: Math.random() * 0.02
+            }));
+        }
+
+        function drawBg() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            hearts.forEach(h => {
+                h.y -= h.speed;
+                h.x += Math.sin(h.y * h.swing) * 0.5;
+                if (h.y < -20) {
+                    h.y = bgCanvas.height + 20;
+                    h.x = Math.random() * bgCanvas.width;
+                }
+                bgCtx.fillStyle = `rgba(255, 117, 140, ${h.opacity})`;
+                bgCtx.font = `${h.size}px sans-serif`;
+                bgCtx.fillText('❤️', h.x, h.y);
+            });
+            requestAnimationFrame(drawBg);
+        }
+
+        window.addEventListener('resize', initBg);
+        initBg();
+        drawBg();
 
         img.onload = () => {
             canvas.width = img.width;
             canvas.height = img.height;
+            magCanvas.width = 160;
+            magCanvas.height = 160;
+            renderArt();
+        };
+        img.src = imgDataUrl;
 
+        function renderArt() {
+            if (!img.complete) return;
+
+            if (showOriginal) {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            const fontSize = parseInt(fontSizeInput.value);
+            fontSizeVal.innerText = fontSize + 'px';
+            const mode = renderModeSelect.value;
+            const contrast = parseFloat(contrastInput.value);
+            
             const offCanvas = document.createElement('canvas');
-            offCanvas.width = img.width;
-            offCanvas.height = img.height;
+            offCanvas.width = canvas.width;
+            offCanvas.height = canvas.height;
             const offCtx = offCanvas.getContext('2d');
             offCtx.drawImage(img, 0, 0);
-            const pixels = offCtx.getImageData(0, 0, img.width, img.height).data;
+            
+            const imgData = offCtx.getImageData(0, 0, canvas.width, canvas.height).data;
 
             ctx.fillStyle = '#0a0a0c';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            const fontSize = 10;
-            ctx.font = `bold ${fontSize}px monospace`;
+            ctx.font = `bold ${fontSize}px 'Fira Code', monospace`;
+            ctx.textBaseline = 'top';
 
-            let charIdx = 0;
-            for (let y = 0; y < canvas.height; y += fontSize * 0.85) {
-                for (let x = 0; x < canvas.width; x += fontSize * 0.65) {
-                    const idx = (Math.floor(y) * canvas.width + Math.floor(x)) * 4;
-                    const r = pixels[idx], g = pixels[idx+1], b = pixels[idx+2];
+            let rawText = customTextInput.value.trim() || "TE AMO ❤️";
+            const words = Array.from(rawText);
+            let charIndex = 0;
+
+            const stepX = fontSize * 0.65;
+            const stepY = fontSize * 0.85;
+
+            for (let y = 0; y < canvas.height; y += stepY) {
+                for (let x = 0; x < canvas.width; x += stepX) {
+                    const pxX = Math.floor(x);
+                    const pxY = Math.floor(y);
+                    const idx = (pxY * canvas.width + pxX) * 4;
+
+                    let r = imgData[idx];
+                    let g = imgData[idx + 1];
+                    let b = imgData[idx + 2];
+
                     if (r === undefined) continue;
 
-                    ctx.fillStyle = `rgb(${r},${g},${b})`;
-                    ctx.fillText(miTexto[charIdx % miTexto.length], x, y);
-                    charIdx++;
+                    r = Math.min(255, Math.max(0, (r - 128) * contrast + 128));
+                    g = Math.min(255, Math.max(0, (g - 128) * contrast + 128));
+                    b = Math.min(255, Math.max(0, (b - 128) * contrast + 128));
+
+                    const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+                    const char = words[charIndex % words.length];
+                    charIndex++;
+
+                    if (mode === 'color') {
+                        ctx.fillStyle = `rgb(${r},${g},${b})`;
+                    } else if (mode === 'romantic') {
+                        const mix = brightness;
+                        ctx.fillStyle = `rgb(${Math.floor(255 * mix)},${Math.floor(77 + 100 * mix)},${Math.floor(140 + 115 * mix)})`;
+                    } else if (mode === 'ascii') {
+                        const v = Math.floor(brightness * 255);
+                        ctx.fillStyle = `rgb(${v},${v},${v})`;
+                    } else if (mode === 'gold') {
+                        ctx.fillStyle = `rgb(${Math.floor(r * 1.1)},${Math.floor(g * 0.85)},${Math.floor(b * 0.4)})`;
+                    }
+
+                    ctx.fillText(char, x, y);
                 }
             }
-        };
+        }
 
-        // Carga la foto (o tu Base64)
-        img.src = 'tu_foto.jpg';
+        canvas.addEventListener('mousemove', (e) => {
+            if (!enableLoupe) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            mag.style.display = 'block';
+            
+            const magX = e.clientX - rect.left - 80;
+            const magY = e.clientY - rect.top - 80;
+            mag.style.left = magX + 'px';
+            mag.style.top = magY + 'px';
+
+            magCtx.fillStyle = '#000';
+            magCtx.fillRect(0, 0, 160, 160);
+            
+            const zoomFactor = 2.5;
+            const srcSize = 160 / zoomFactor;
+            
+            magCtx.drawImage(
+                canvas,
+                mouseX - srcSize / 2,
+                mouseY - srcSize / 2,
+                srcSize,
+                srcSize,
+                0,
+                0,
+                160,
+                160
+            );
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            mag.style.display = 'none';
+        });
+
+        customTextInput.addEventListener('input', renderArt);
+        fontSizeInput.addEventListener('input', renderArt);
+        renderModeSelect.addEventListener('change', renderArt);
+        contrastInput.addEventListener('input', renderArt);
+
+        toggleOriginalBtn.addEventListener('click', () => {
+            showOriginal = !showOriginal;
+            toggleOriginalBtn.innerText = showOriginal ? '✨ Ver Arte en Texto' : '📷 Ver Foto Original';
+            renderArt();
+        });
+
+        toggleLoupeBtn.addEventListener('click', () => {
+            enableLoupe = !enableLoupe;
+            toggleLoupeBtn.innerText = enableLoupe ? '🔍 Lupa: ON' : '🔍 Lupa: OFF';
+            if (!enableLoupe) mag.style.display = 'none';
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'foto.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
     </script>
 </body>
 </html>
