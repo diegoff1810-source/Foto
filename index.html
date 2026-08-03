@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retrato de Amor ❤️</title>
+    <title>Retrato de Amor</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #0d0f18;
-            --card-bg: rgba(22, 26, 42, 0.8);
+            --card-bg: rgba(22, 26, 42, 0.85);
             --accent-pink: #ff4d7d;
             --text-light: #f3f4f6;
-            --border-color: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.12);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -24,58 +24,95 @@
             align-items: center;
             overflow-x: hidden;
             position: relative;
+            padding-bottom: 2rem;
         }
         #bgCanvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 0;
         }
-        header { text-align: center; padding: 2rem 1rem 1rem; z-index: 10; max-width: 800px; }
-        header h1 {
-            font-size: 2rem; font-weight: 700;
-            background: linear-gradient(135deg, #ff758c, #ff7eb3, #a855f7);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+        header { 
+            text-align: center; 
+            padding: 1.5rem 1rem 0.8rem; 
+            z-index: 10; 
+            max-width: 800px; 
+            width: 100%;
         }
-        header p { color: #9ca3af; font-size: 0.9rem; }
-        main { z-index: 10; width: 100%; max-width: 1100px; padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+        header h1 {
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff758c, #ff7eb3, #a855f7);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.4rem;
+        }
+        header p { color: #9ca3af; font-size: clamp(0.8rem, 3vw, 0.95rem); }
+        
+        main { 
+            z-index: 10; 
+            width: 100%; 
+            max-width: 1100px; 
+            padding: 0.5rem 1rem; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 1rem; 
+        }
+
         .controls-card {
             background: var(--card-bg); backdrop-filter: blur(12px);
             border: 1px solid var(--border-color); border-radius: 16px;
             padding: 1.25rem; width: 100%; max-width: 900px;
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 1rem; align-items: center;
         }
         .control-group { display: flex; flex-direction: column; gap: 0.3rem; }
         .control-group label { font-size: 0.8rem; font-weight: 600; color: #d1d5db; }
         .control-group input[type="text"] {
             background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff; padding: 0.5rem; border-radius: 8px; outline: none;
+            color: #fff; padding: 0.55rem; border-radius: 8px; outline: none; font-size: 0.9rem;
         }
         .control-group select, .control-group input[type="range"] {
             background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff; padding: 0.4rem; border-radius: 8px; outline: none; cursor: pointer;
+            color: #fff; padding: 0.45rem; border-radius: 8px; outline: none; cursor: pointer;
         }
-        .btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; grid-column: 1 / -1; justify-content: center; margin-top: 0.5rem; }
+        .btn-group { display: flex; gap: 0.6rem; flex-wrap: wrap; grid-column: 1 / -1; justify-content: center; margin-top: 0.5rem; }
         .btn {
             background: linear-gradient(135deg, #ff4d7d, #e11d48); color: white; border: none;
-            padding: 0.6rem 1.2rem; border-radius: 30px; font-weight: 600; font-size: 0.85rem; cursor: pointer;
+            padding: 0.65rem 1.2rem; border-radius: 30px; font-weight: 600; font-size: 0.85rem; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 0.4rem; transition: transform 0.2s;
         }
+        .btn:active { transform: scale(0.96); }
         .btn-secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .btn-music { background: linear-gradient(135deg, #a855f7, #6366f1); }
+        
         .canvas-container {
             position: relative; background: #000; border-radius: 16px; overflow: hidden;
             border: 1px solid var(--border-color); max-width: 100%; display: flex; justify-content: center;
+            touch-action: none;
         }
         canvas#artCanvas { display: block; max-width: 100%; height: auto; cursor: crosshair; }
         #magnifier {
-            position: absolute; width: 160px; height: 160px; border-radius: 50%;
+            position: absolute; width: 140px; height: 140px; border-radius: 50%;
             border: 3px solid var(--accent-pink); pointer-events: none; display: none;
             overflow: hidden; background-color: #000; z-index: 100;
+            box-shadow: 0 0 20px rgba(255, 77, 125, 0.5);
         }
         #magnifierCanvas { position: absolute; top: 0; left: 0; }
+
+        @media (max-width: 600px) {
+            .controls-card { grid-template-columns: 1fr; padding: 1rem; }
+            .control-group { grid-column: span 1 !important; }
+            .btn { width: 100%; justify-content: center; }
+            #magnifier { width: 110px; height: 110px; }
+        }
     </style>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
+    
+    <!-- Audio de Fondo -->
+    <audio id="bgAudio" loop src="life.mp3"></audio>
+
     <header>
         <h1>Retrato de Amor 💜</h1>
         <p>Activa la lupa para ver cómo las palabras forman nuestra fotografía.</p>
@@ -103,12 +140,13 @@
                 <input type="range" id="contrast" min="0.8" max="1.8" value="1.1" step="0.05">
             </div>
             <div class="btn-group">
+                <button class="btn btn-music" id="musicBtn">🎵 Música: OFF</button>
                 <button class="btn" id="toggleOriginalBtn">📷 Ver Foto Original</button>
                 <button class="btn btn-secondary" id="toggleLoupeBtn">🔍 Lupa: ON</button>
                 <button class="btn btn-secondary" id="downloadBtn">📥 Descargar Imagen</button>
             </div>
         </div>
-        <div class="canvas-container">
+        <div class="canvas-container" id="canvasContainer">
             <canvas id="artCanvas"></canvas>
             <div id="magnifier"><canvas id="magnifierCanvas"></canvas></div>
         </div>
@@ -121,6 +159,7 @@
         const magCtx = magCanvas.getContext('2d');
         const bgCanvas = document.getElementById('bgCanvas');
         const bgCtx = bgCanvas.getContext('2d');
+        const audio = document.getElementById('bgAudio');
 
         const customTextInput = document.getElementById('customText');
         const fontSizeInput = document.getElementById('fontSize');
@@ -130,13 +169,16 @@
         const toggleOriginalBtn = document.getElementById('toggleOriginalBtn');
         const toggleLoupeBtn = document.getElementById('toggleLoupeBtn');
         const downloadBtn = document.getElementById('downloadBtn');
+        const musicBtn = document.getElementById('musicBtn');
 
         let img = new Image();
         let showOriginal = false;
         let enableLoupe = true;
+        let isPlaying = false;
 
         img.crossOrigin = "Anonymous";
 
+        // Animación de corazones de fondo
         let hearts = [];
         function initBg() {
             bgCanvas.width = window.innerWidth;
@@ -174,8 +216,9 @@
         img.onload = () => {
             canvas.width = img.width;
             canvas.height = img.height;
-            magCanvas.width = 160;
-            magCanvas.height = 160;
+            const magSize = window.innerWidth < 600 ? 110 : 160;
+            magCanvas.width = magSize;
+            magCanvas.height = magSize;
             renderArt();
         };
 
@@ -249,25 +292,32 @@
             }
         }
 
-        canvas.addEventListener('mousemove', (e) => {
+        // Lupa interactiva (compatible con mouse y pantallas táctiles)
+        function updateMagnifier(clientX, clientY) {
             if (!enableLoupe) return;
 
             const rect = canvas.getBoundingClientRect();
-            const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
-            const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+            if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+                mag.style.display = 'none';
+                return;
+            }
 
+            const mouseX = (clientX - rect.left) * (canvas.width / rect.width);
+            const mouseY = (clientY - rect.top) * (canvas.height / rect.height);
+
+            const magDiameter = magCanvas.width;
             mag.style.display = 'block';
             
-            const magX = e.clientX - rect.left - 80;
-            const magY = e.clientY - rect.top - 80;
+            const magX = clientX - rect.left - (magDiameter / 2);
+            const magY = clientY - rect.top - (magDiameter / 2);
             mag.style.left = magX + 'px';
             mag.style.top = magY + 'px';
 
             magCtx.fillStyle = '#000';
-            magCtx.fillRect(0, 0, 160, 160);
+            magCtx.fillRect(0, 0, magDiameter, magDiameter);
             
             const zoomFactor = 2.5;
-            const srcSize = 160 / zoomFactor;
+            const srcSize = magDiameter / zoomFactor;
             
             magCtx.drawImage(
                 canvas,
@@ -277,13 +327,33 @@
                 srcSize,
                 0,
                 0,
-                160,
-                160
+                magDiameter,
+                magDiameter
             );
-        });
+        }
 
-        canvas.addEventListener('mouseleave', () => {
-            mag.style.display = 'none';
+        canvas.addEventListener('mousemove', (e) => updateMagnifier(e.clientX, e.clientY));
+        canvas.addEventListener('mouseleave', () => mag.style.display = 'none');
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                updateMagnifier(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        canvas.addEventListener('touchend', () => mag.style.display = 'none');
+
+        // Control de música
+        musicBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                audio.pause();
+                musicBtn.innerText = '🎵 Música: OFF';
+            } else {
+                audio.play().then(() => {
+                    musicBtn.innerText = '🎵 Música: ON';
+                }).catch(err => console.log("Audio play error: ", err));
+            }
+            isPlaying = !isPlaying;
         });
 
         customTextInput.addEventListener('input', renderArt);
