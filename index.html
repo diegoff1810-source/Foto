@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foto en Texto de Amor ❤️</title>
+    <title>Retrato de Amor ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -77,14 +77,14 @@
 <body>
     <canvas id="bgCanvas"></canvas>
     <header>
-        <h1>Retrato de Amor en Texto ❤️</h1>
-        <p>Pasa el cursor o activa la lupa para ver cómo miles de palabras forman su fotografía.</p>
+        <h1>Retrato de Amor 💜</h1>
+        <p>Activa la lupa para ver cómo las palabras forman nuestra fotografía.</p>
     </header>
     <main>
         <div class="controls-card">
             <div class="control-group" style="grid-column: span 2;">
                 <label for="customText">Texto personalizado:</label>
-                <input type="text" id="customText" value="TE AMO ❤️ JUNTOS SIEMPRE ❤️ NUESTRA HISTORIA ❤️">
+                <input type="text" id="customText" value="PINIWEENIE">
             </div>
             <div class="control-group">
                 <label for="fontSize">Tamaño del Texto: <span id="fontSizeVal">10px</span></label>
@@ -208,7 +208,7 @@
             ctx.font = `bold ${fontSize}px 'Fira Code', monospace`;
             ctx.textBaseline = 'top';
 
-            let rawText = customTextInput.value.trim() || "TE AMO ❤️";
+            let rawText = customTextInput.value.trim() || "PINIWEENIE";
             const words = Array.from(rawText);
             let charIndex = 0;
 
